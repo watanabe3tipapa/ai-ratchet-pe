@@ -1,0 +1,12 @@
+# Context: Describe project and what help is wanted.
+Project: MyApp (python+node)
+Goal: Suggest fixes when tests fail, and provide safe command suggestions to run.
+Files: list changed files in repository root (use shell to fill).
+Instructions:
+- Analyze recent logs at ./ai-ratchet-logs/*.log
+- If tests fail, propose 1) root cause hypothesis (1-2 lines), 2) concrete shell commands to try (max 5), 3) confidence (low/med/high).
+- Only suggest non-destructive commands. Prefix potentially risky commands with [REVIEW].
+- Output JSON with keys: summary, hypothesis, commands (array), confidence.
+Output format: JSON only.
+
+

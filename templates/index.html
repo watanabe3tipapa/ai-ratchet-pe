@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ai-ratchet Web UI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>ai-ratchet Web UI</h1>
+    <p class="subtitle">AI支援自動化runnerのWebインターフェース</p>
+    
+    <form id="runForm">
+      <div class="form-group">
+        <label for="runner">Runner選択</label>
+        <select id="runner" name="runner" onchange="updateModes()">
+          <option value="core">runner.sh（コア）</option>
+          <option value="ai">runner-ai.sh（AIモジュール）</option>
+          <option value="ci">runner-ci.sh（CIモジュール）</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="config">設定ファイル</label>
+        <input type="text" id="config" name="config" value="ai-ratchet.yml">
+      </div>
+      
+      <div class="form-group" id="modeGroup">
+        <label for="mode">モード</label>
+        <select id="mode" name="mode">
+          <option value="run">run（通常実行）</option>
+          <option value="dry">dry（ドライラン）</option>
+        </select>
+      </div>
+      
+      <div class="form-group" id="promptGroup" style="display: none;">
+        <label for="prompt">プロンプト / ログファイルパス</label>
+        <input type="text" id="prompt" name="prompt" placeholder="タスク内容またはログファイルパス">
+      </div>
+      
+      <button type="submit">実行</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;">
+      <h2>結果</h2>
+      <pre id="resultText"></pre>
+    </div>
+    
+    <div id="error" class="error" style="display: none;"></div>
+  </div>
+  
+  <script>
+    function updateModes() {
+      const runner = document.getElementById('runner').value;
+      const modeGroup = document.getElementById('modeGroup');
+      const modeSelect = document.getElementById('mode');
+      const promptGroup = document.getElementById('promptGroup');
+      
+      modeSelect.innerHTML = '';
+      
+      if (runner === 'core') {
+        modeGroup.style.display = 'block';
+        promptGroup.style.display = 'none';
+        modeSelect.add(new Option('run（通常実行）', 'run'));
+        modeSelect.add(new Option('dry（ドライラン）', 'dry'));
+      } else if (runner === 'ai') {
+        modeGroup.style.display = 'none';
+        promptGroup.style.display = 'block';
+      } else if (runner === 'ci') {
+        modeGroup.style.display = 'block';
+        promptGroup.style.display = 'none';
+        modeSelect.add(new Option('通常実行', ''));
+        modeSelect.add(new Option('JSON出力', 'json'));
+        modeSelect.add(new Option('詳細出力', '--verbose'));
+      }
+    }
+    
+    document.getElementById('runForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const resultDiv = document.getElementById('result');
+      const errorDiv = document.getElementById('error');
+      const resultText = document.getElementById('resultText');
+      
+      resultDiv.style.display = 'none';
+      errorDiv.style.display = 'none';
+      
+      const runner = formData.get('runner');
+      const mode = formData.get('mode') || '';
+      const prompt = formData.get('prompt') || '';
+      
+      try {
+        const response = await fetch('/run', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+          errorDiv.textContent = data.error;
+          errorDiv.style.display = 'block';
+        } else {
+          resultText.textContent = data.output || '実行完了';
+          resultDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = '通信エラーが発生しました';
+        errorDiv.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

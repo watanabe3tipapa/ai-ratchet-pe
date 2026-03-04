@@ -1,0 +1,6 @@
+[project]
+name = "ai-ratchet-webui"
+version = "0.1.0"
+description = "ai-ratchet Web UI"
+requires-python = ">=3.13"
+dependencies = ["fastapi", "uvicorn", "jinja2", "python-multipart"]

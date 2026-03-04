@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ai-ratchet 使用方法</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>ai-ratchet 使用方法</h1>
+
+    <section>
+      <h2>概要</h2>
+      <p>ai-ratchet は、AIを支援する自動化runnerです。シェルスクリプトで複数言語ランタイム／コマンドを逐次・条件的に切り替え・実行し、AIが支援する仕組みを実現します。</p>
+      <p><strong>目的</strong>：口径（ランタイムやコマンド）が異なる実行対象を安全かつ効率的にリレー（逐次/並列）すること</p>
+    </section>
+
+    <section>
+      <h2>構成</h2>
+      <pre><code>ai-ratchet/
+├── runner.sh        # コア
+├── runner-ai.sh     # AIモジュール
+├── runner-ci.sh     # CIモジュール
+├── main.py          # Web UI（オプション）
+└── ai-ratchet.yml # 設定</code></pre>
+    </section>
+
+    <section>
+      <h2>使い方①：コマンドライン</h2>
+      
+      <h3>runner.sh（コア）</h3>
+      <pre><code># 通常実行
+./runner.sh ai-ratchet.yml
+
+# ドライラン
+./runner.sh ai-ratchet.yml dry</code></pre>
+
+      <h3>runner-ai.sh（AIモジュール）</h3>
+      <pre><code># コマンド生成
+./runner-ai.sh ai-ratchet.yml generate "テストを実行"
+
+# エラー解析
+./runner-ai.sh ai-ratchet.yml explain-failure ai-ratchet-logs/test.log
+
+# manifest作成
+./runner-ai.sh ai-ratchet.yml create-manifest</code></pre>
+
+      <h3>runner-ci.sh（CIモジュール）</h3>
+      <pre><code># JSON出力
+./runner-ci.sh ai-ratchet.yml --json</code></pre>
+    </section>
+
+    <section>
+      <h2>使い方②：Web UI</h2>
+      
+      <h3>起動</h3>
+      <pre><code>uv sync
+uv run uvicorn main:app --reload</code></pre>
+      <p>ブラウザで <code>http://localhost:8000</code> を開く</p>
+
+      <h3>できること</h3>
+      <ul>
+        <li>Runner選択（runner.sh / runner-ai.sh / runner-ci.sh）</li>
+        <li>モード選択</li>
+        <li>プロンプト入力</li>
+        <li>結果表示</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>設定ファイル</h2>
+      <pre><code>runtimes:
+  python: ["python3.11","python3","python"]
+  node: ["node18","node16","node"]
+
+phases:
+  - name: init
+    cmds:
+      - "PYTHON -m pip install -r requirements.txt"
+    retries: 1</code></pre>
+    </section>
+
+    <section>
+      <h2>ログ</h2>
+      <p>ログは <code>ai-ratchet-logs/</code> ディレクトリに保存されます</p>
+    </section>
+
+    <section>
+      <h2>セキュリティ</h2>
+      <p>危険なコマンドは自動的にブロックされます（rm -rf, sudo など）</p>
+    </section>
+
+    <section>
+      <h2>必要な環境</h2>
+      <ul>
+        <li>Bash, sed, awk</li>
+        <li>jq（オプション）</li>
+        <li>ollama / openclaw（AI機能を使う場合）</li>
+        <li>uv + python（Web UIを使う場合）</li>
+      </ul>
+    </section>
+
+    <div class="back-link">
+      <a href="https://github.com/watanabe3tipapa/ai-ratchet-pe">
+        <svg height="20" viewBox="0 0 16 16" version="1.1" width="20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+        </svg>
+        リポジトリに戻る
+      </a>
+    </div>
+  </div>
+</body>
+</html>

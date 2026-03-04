@@ -1,0 +1,23 @@
+runtimes:
+  python: ["python3.11","python3","python"]
+  node: ["node18","node16","node"]
+
+phases:
+  - name: init
+    cmds:
+      - "PYTHON -m pip install -r requirements.txt"
+      - "npm ci"
+    retries: 1
+
+  - name: ai_assist
+    cmds:
+      - "OLLAMA run --model llama2 --prompt-file ai-prompt.txt > ai-assist.json"
+      - "OPENCLAW analyze --input ai-assist.json --output ai-recs.json"
+    retries: 0
+
+  - name: test
+    cmds:
+      - "PYTHON -m pytest -q"
+      - "npm test"
+    retries: 1
+
