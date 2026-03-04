@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](https://github.com/watanabe3tipapa/ai-ratchet-pe)
 
-# ai-ratchet
+# 🔩 ai-ratchet-pe 🔧
 
 AIを支援する自動化runnerです。シェルスクリプトで複数言語ランタイム／コマンドを逐次・条件的に切り替え・実行し、AIが支援する仕組みを実現します。
 
