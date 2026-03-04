@@ -66,7 +66,7 @@ uv run uvicorn main:app --reload
 
 ## 詳細ドキュメント
 
-- [USAGE.md](docs/USAGE.md) - 詳しい使い方
+- [GitHub pages](https://watanabe3tipapa.github.io/ai-ratchet-pe/USAGE.html) - 詳しい使い方
 
 ## 必要な環境
 
